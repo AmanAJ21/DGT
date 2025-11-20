@@ -1,0 +1,19 @@
+.card-swap-container {
+  position: relative;
+  width: 100%;
+  padding: 20vh 0;
+}
+
+.card-swap-item {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 100vh;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+.card-swap-item:last-child {
+  margin-bottom: 50vh;
+}
