@@ -7,8 +7,8 @@ import { FadeIn, SlideIn, ScaleIn } from '@/components/animations';
 export default function Services() {
   const services = [
     {
-      title: 'Local Transport',
-      description: 'Fast and reliable local delivery services within city limits with same-day options',
+      title: 'All India Transport',
+      description: 'Fast and reliable All India Transport',
       gradient: 'from-blue-500 to-blue-600',
       icon: (
         <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
