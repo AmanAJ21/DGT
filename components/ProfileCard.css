@@ -244,22 +244,26 @@
 
 .pc-avatar-content {
   mix-blend-mode: luminosity;
-  overflow: visible;
+  overflow: hidden;
   transform: translateZ(2);
   backface-visibility: hidden;
 }
 
 .pc-avatar-content .avatar {
   width: 100%;
+  height: 100%;
   position: absolute;
   left: 50%;
   transform-origin: 50% 100%;
   transform: translateX(calc(-50% + (var(--pointer-from-left) - 0.5) * 6px)) translateZ(0)
     scaleY(calc(1 + (var(--pointer-from-top) - 0.5) * 0.02)) scaleX(calc(1 + (var(--pointer-from-left) - 0.5) * 0.01));
-  bottom: -1px;
+  bottom: 0;
   backface-visibility: hidden;
   will-change: transform;
   transition: transform 120ms ease-out;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
 }
 
 .pc-avatar-content::before {
@@ -381,29 +385,31 @@
 .pc-details {
   width: 100%;
   position: absolute;
-  top: 3em;
+  top: 1.5em;
   display: flex;
   flex-direction: column;
+  padding: 0 1em;
 }
 
 .pc-details h3 {
   font-weight: 600;
   margin: 0;
-  font-size: min(5svh, 3em);
+  font-size: min(4.5svh, 2.5em);
   margin: 0;
   background-image: linear-gradient(to bottom, #fff, #6f6fbe);
   background-size: 1em 1.5em;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .pc-details p {
   font-weight: 600;
   position: relative;
-  top: -12px;
+  top: -8px;
   white-space: nowrap;
-  font-size: 16px;
+  font-size: 14px;
   margin: 0 auto;
   width: min-content;
   background-image: linear-gradient(to bottom, #fff, #4a4ac0);
@@ -411,6 +417,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes glow-bg {
@@ -446,15 +453,16 @@
   }
 
   .pc-details {
-    top: 2em;
+    top: 1.2em;
   }
 
   .pc-details h3 {
-    font-size: min(4svh, 2.5em);
+    font-size: min(3.5svh, 2em);
   }
 
   .pc-details p {
-    font-size: 14px;
+    font-size: 12px;
+    top: -6px;
   }
 
   .pc-user-info {
@@ -496,16 +504,16 @@
   }
 
   .pc-details {
-    top: 1.5em;
+    top: 1em;
   }
 
   .pc-details h3 {
-    font-size: min(3.5svh, 2em);
+    font-size: min(3svh, 1.8em);
   }
 
   .pc-details p {
-    font-size: 12px;
-    top: -8px;
+    font-size: 11px;
+    top: -5px;
   }
 
   .pc-user-info {
@@ -547,12 +555,17 @@
     max-height: 320px;
   }
 
+  .pc-details {
+    top: 0.8em;
+  }
+
   .pc-details h3 {
-    font-size: min(3svh, 1.5em);
+    font-size: min(2.5svh, 1.4em);
   }
 
   .pc-details p {
-    font-size: 11px;
+    font-size: 10px;
+    top: -4px;
   }
 
   .pc-user-info {
