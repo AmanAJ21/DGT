@@ -3,6 +3,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Performance optimization: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Performance optimization: CSS containment for animations */
+.animate-blob,
+.animate-gradient,
+.animate-scroll {
+  contain: layout style paint;
+  will-change: transform;
+}
+
 @layer utilities {
   /* Animations */
   @keyframes fade-in {
@@ -37,6 +57,24 @@
     }
     75% {
       transform: translate(50px, 50px) scale(1.05);
+    }
+  }
+
+  /* Mobile optimization: Slower animations on smaller screens */
+  @media (max-width: 768px) {
+    @keyframes blob {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(10px, -25px) scale(1.05);
+      }
+      50% {
+        transform: translate(-10px, 10px) scale(0.95);
+      }
+      75% {
+        transform: translate(25px, 25px) scale(1.02);
+      }
     }
   }
 

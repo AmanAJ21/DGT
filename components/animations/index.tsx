@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 
 interface AnimationProps {
   children: ReactNode;
@@ -15,29 +15,45 @@ interface SlideInProps extends AnimationProps {
   direction?: 'up' | 'down' | 'left' | 'right';
 }
 
-// FadeIn Animation
-export const FadeIn = ({ children, duration = 1, delay = 0, className = '', immediate = false }: AnimationProps) => {
+// Performance optimization: Check for reduced motion preference
+const shouldReduceMotion = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+// FadeIn Animation - Memoized for performance
+export const FadeIn = memo(({ children, duration = 1, delay = 0, className = '', immediate = false }: AnimationProps) => {
+  const reducedMotion = shouldReduceMotion();
+  const actualDuration = reducedMotion ? 0.01 : duration / 1000;
+  const actualDelay = reducedMotion ? 0 : delay / 1000;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={immediate ? { opacity: 1 } : undefined}
       whileInView={immediate ? undefined : { opacity: 1 }}
-      viewport={immediate ? undefined : { once: true }}
-      transition={{ duration: duration / 1000, delay: delay / 1000 }}
+      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
       {children}
     </motion.div>
   );
-};
+});
 
-// SlideIn Animation
-export const SlideIn = ({ children, direction = 'up', duration = 0.8, delay = 0, className = '', immediate = false }: SlideInProps) => {
+FadeIn.displayName = 'FadeIn';
+
+// SlideIn Animation - Memoized for performance
+export const SlideIn = memo(({ children, direction = 'up', duration = 0.8, delay = 0, className = '', immediate = false }: SlideInProps) => {
+  const reducedMotion = shouldReduceMotion();
+  const actualDuration = reducedMotion ? 0.01 : duration / 1000;
+  const actualDelay = reducedMotion ? 0 : delay / 1000;
+  
   const directions = {
-    up: { y: 50 },
-    down: { y: -50 },
-    left: { x: 50 },
-    right: { x: -50 },
+    up: { y: reducedMotion ? 0 : 50 },
+    down: { y: reducedMotion ? 0 : -50 },
+    left: { x: reducedMotion ? 0 : 50 },
+    right: { x: reducedMotion ? 0 : -50 },
   };
 
   return (
@@ -45,30 +61,39 @@ export const SlideIn = ({ children, direction = 'up', duration = 0.8, delay = 0,
       initial={{ opacity: 0, ...directions[direction] }}
       animate={immediate ? { opacity: 1, x: 0, y: 0 } : undefined}
       whileInView={immediate ? undefined : { opacity: 1, x: 0, y: 0 }}
-      viewport={immediate ? undefined : { once: true }}
-      transition={{ duration: duration / 1000, delay: delay / 1000 }}
+      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
       {children}
     </motion.div>
   );
-};
+});
 
-// ScaleIn Animation
-export const ScaleIn = ({ children, duration = 0.8, delay = 0, className = '', immediate = false }: AnimationProps) => {
+SlideIn.displayName = 'SlideIn';
+
+// ScaleIn Animation - Memoized for performance
+export const ScaleIn = memo(({ children, duration = 0.8, delay = 0, className = '', immediate = false }: AnimationProps) => {
+  const reducedMotion = shouldReduceMotion();
+  const actualDuration = reducedMotion ? 0.01 : duration / 1000;
+  const actualDelay = reducedMotion ? 0 : delay / 1000;
+  const initialScale = reducedMotion ? 1 : 0.8;
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: initialScale }}
       animate={immediate ? { opacity: 1, scale: 1 } : undefined}
       whileInView={immediate ? undefined : { opacity: 1, scale: 1 }}
-      viewport={immediate ? undefined : { once: true }}
-      transition={{ duration: duration / 1000, delay: delay / 1000 }}
+      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
       {children}
     </motion.div>
   );
-};
+});
+
+ScaleIn.displayName = 'ScaleIn';
 
 // ZoomIn Animation
 export const ZoomIn = ({ children, duration = 0.8, delay = 0, className = '' }: AnimationProps) => {

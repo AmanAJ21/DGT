@@ -41,12 +41,38 @@ const ProfileCardComponent = ({
 }) => {
   const wrapRef = useRef(null);
   const shellRef = useRef(null);
-
   const enterTimerRef = useRef(null);
   const leaveRafRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  // Performance optimization: detect mobile and reduced motion preference
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMotionPreference = () => {
+      setPrefersReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    };
+    
+    checkMobile();
+    checkMotionPreference();
+    
+    window.addEventListener('resize', checkMobile);
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    motionQuery.addEventListener('change', checkMotionPreference);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      motionQuery.removeEventListener('change', checkMotionPreference);
+    };
+  }, []);
+
+  // Disable tilt on mobile or when user prefers reduced motion
+  const shouldEnableTilt = enableTilt && !isMobile && !prefersReducedMotion;
 
   const tiltEngine = useMemo(() => {
-    if (!enableTilt) return null;
+    if (!shouldEnableTilt) return null;
 
     let rafId = null;
     let running = false;
@@ -155,7 +181,7 @@ const ProfileCardComponent = ({
         lastTs = 0;
       }
     };
-  }, [enableTilt]);
+  }, [shouldEnableTilt]);
 
   const getOffsets = (evt, el) => {
     const rect = el.getBoundingClientRect();
@@ -166,8 +192,16 @@ const ProfileCardComponent = ({
     event => {
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
-      const { x, y } = getOffsets(event, shell);
-      tiltEngine.setTarget(x, y);
+      
+      // Debounce pointer move events for performance (60fps max)
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      
+      debounceTimerRef.current = setTimeout(() => {
+        const { x, y } = getOffsets(event, shell);
+        tiltEngine.setTarget(x, y);
+      }, 16); // ~60fps
     },
     [tiltEngine]
   );
@@ -233,7 +267,7 @@ const ProfileCardComponent = ({
   );
 
   useEffect(() => {
-    if (!enableTilt || !tiltEngine) return;
+    if (!shouldEnableTilt || !tiltEngine) return;
 
     const shell = shellRef.current;
     if (!shell) return;
@@ -279,11 +313,12 @@ const ProfileCardComponent = ({
       window.removeEventListener('deviceorientation', deviceOrientationHandler);
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
       if (leaveRafRef.current) cancelAnimationFrame(leaveRafRef.current);
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
       tiltEngine.cancel();
       shell.classList.remove('entering');
     };
   }, [
-    enableTilt,
+    shouldEnableTilt,
     enableMobileTilt,
     tiltEngine,
     handlePointerMove,

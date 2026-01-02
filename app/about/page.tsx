@@ -1,7 +1,13 @@
 "use client"
-import Dither from '@/components/Dither';
+import dynamic from 'next/dynamic';
 import ProfileCard from '@/components/ProfileCard';
 import { FadeIn, SlideIn, ScaleIn } from '@/components/animations';
+
+// Lazy load Dither component for better performance
+const Dither = dynamic(() => import('@/components/Dither'), {
+  loading: () => <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />,
+  ssr: false
+});
 
 export default function About() {
   return (

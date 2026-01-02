@@ -30,11 +30,13 @@
   --card-radius: 30px;
 }
 
+/* Performance optimizations */
 .pc-card-wrapper {
   perspective: 500px;
   transform: translate3d(0, 0, 0.1px);
   position: relative;
   touch-action: none;
+  contain: layout style paint; /* CSS containment for better performance */
 }
 
 .pc-behind {
@@ -50,6 +52,7 @@
   filter: blur(50px) saturate(1.1);
   opacity: calc(0.8 * var(--card-opacity));
   transition: opacity 200ms ease;
+  will-change: opacity; /* Performance hint */
 }
 
 .pc-card-wrapper:hover,
@@ -57,6 +60,7 @@
   --card-opacity: 1;
 }
 
+/* Optimize animations for performance */
 .pc-card {
   height: 80svh;
   max-height: 540px;
@@ -66,6 +70,7 @@
   position: relative;
   background-blend-mode: color-dodge, normal, normal, normal;
   animation: glow-bg 12s linear infinite;
+  animation-play-state: paused; /* Pause by default, activate on hover */
   box-shadow: rgba(0, 0, 0, 0.8) calc((var(--pointer-from-left) * 10px) - 3px)
     calc((var(--pointer-from-top) * 20px) - 6px) 20px -5px;
   transition: transform 1s ease;
@@ -73,12 +78,14 @@
   background: rgba(0, 0, 0, 0.9);
   backface-visibility: hidden;
   overflow: hidden;
+  will-change: transform; /* Hint to browser for optimization */
 }
 
 .pc-card:hover,
 .pc-card.active {
   transition: none;
   transform: translateZ(0) rotateX(var(--rotate-y)) rotateY(var(--rotate-x));
+  animation-play-state: running; /* Activate animation on hover */
 }
 
 .pc-card-shell.entering .pc-card {
@@ -114,8 +121,9 @@
   transition: filter 0.8s ease;
   filter: brightness(0.5) contrast(1.1) saturate(0.2) opacity(0.3);
   animation: holo-bg 18s linear infinite;
-  animation-play-state: running;
+  animation-play-state: paused; /* Pause by default for performance */
   mix-blend-mode: color-dodge;
+  will-change: filter, animation-play-state; /* Performance hint */
 }
 
 .pc-shine,
@@ -179,7 +187,7 @@
 .pc-card:hover .pc-shine,
 .pc-card.active .pc-shine {
   filter: brightness(0.5) contrast(1.1) saturate(0.15);
-  animation-play-state: paused;
+  animation-play-state: running; /* Activate on hover */
 }
 
 .pc-card:hover .pc-shine::before,
@@ -597,6 +605,46 @@
     padding: 4px 8px;
     font-size: 9px;
     border-radius: 50px;
+  }
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  .pc-card {
+    /* Disable expensive animations on mobile */
+    animation: none;
+  }
+  
+  .pc-shine {
+    /* Simplify shine effect on mobile */
+    animation: none;
+    filter: brightness(0.7) opacity(0.5);
+  }
+  
+  .pc-behind {
+    /* Reduce blur intensity on mobile */
+    filter: blur(25px) saturate(1.0);
+  }
+  
+  .pc-glare {
+    /* Simplify glare effect on mobile */
+    opacity: 0.3;
+    filter: brightness(0.8);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .pc-card,
+  .pc-shine,
+  .pc-glare {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .pc-card:hover,
+  .pc-card.active {
+    transform: none !important;
   }
 }
 

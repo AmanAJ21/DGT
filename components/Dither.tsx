@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import '@/public/css/Dither.css';
 
@@ -85,15 +85,43 @@ export default function Dither(props: DitherProps) {
   const propsRef = useRef<DitherProps>(props);
   propsRef.current = props;
   const ctnDom = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Detect mobile and visibility for performance optimization
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    // Pause animation when tab is not visible
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     const ctn = ctnDom.current;
     if (!ctn) return;
 
+    // Performance optimization: reduce quality on mobile
+    const pixelRatio = isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio;
+    
     const renderer = new Renderer({
       alpha: true,
       premultipliedAlpha: true,
-      antialias: false
+      antialias: !isMobile, // Disable antialiasing on mobile for performance
+      dpr: pixelRatio
     });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -119,8 +147,11 @@ export default function Dither(props: DitherProps) {
       delete geometry.attributes.uv;
     }
 
+    // Cache Color objects to avoid creating new ones every frame
     const c1 = new Color(color1);
     const c2 = new Color(color2);
+    let cachedColor1 = color1;
+    let cachedColor2 = color2;
 
     program = new Program(gl, {
       vertex: VERT,
@@ -138,25 +169,49 @@ export default function Dither(props: DitherProps) {
     const mesh = new Mesh(gl, { geometry, program });
     ctn.appendChild(gl.canvas);
 
+    // Frame rate limiting for performance
+    const maxFPS = isMobile ? 30 : 60;
+    const frameTime = 1000 / maxFPS;
+    let lastFrameTime = 0;
     let animateId = 0;
+    
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
+      
+      // Skip frame if not enough time has passed or tab is not visible
+      if (!isVisible || (t - lastFrameTime < frameTime)) {
+        return;
+      }
+      lastFrameTime = t;
+      
       if (program) {
         program.uniforms.uTime.value = t * 0.001;
         
         const currentProps = propsRef.current;
-        const currentC1 = new Color(currentProps.color1 ?? color1);
-        const currentC2 = new Color(currentProps.color2 ?? color2);
         
-        program.uniforms.uColor1.value = [currentC1.r, currentC1.g, currentC1.b];
-        program.uniforms.uColor2.value = [currentC2.r, currentC2.g, currentC2.b];
+        // Only update colors if they changed (avoid creating new Color objects)
+        if (currentProps.color1 !== cachedColor1) {
+          cachedColor1 = currentProps.color1 ?? color1;
+          const newC1 = new Color(cachedColor1);
+          program.uniforms.uColor1.value = [newC1.r, newC1.g, newC1.b];
+        }
+        
+        if (currentProps.color2 !== cachedColor2) {
+          cachedColor2 = currentProps.color2 ?? color2;
+          const newC2 = new Color(cachedColor2);
+          program.uniforms.uColor2.value = [newC2.r, newC2.g, newC2.b];
+        }
+        
         program.uniforms.uScale.value = currentProps.scale ?? scale;
         program.uniforms.uSpeed.value = currentProps.speed ?? speed;
         
         renderer.render({ scene: mesh });
       }
     };
-    animateId = requestAnimationFrame(update);
+    
+    if (isVisible) {
+      animateId = requestAnimationFrame(update);
+    }
 
     resize();
 
@@ -168,7 +223,7 @@ export default function Dither(props: DitherProps) {
       }
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, [color1, color2, scale, speed]);
+  }, [color1, color2, scale, speed, isMobile, isVisible]);
 
   return <div ref={ctnDom} className="dither-container" />;
 }
