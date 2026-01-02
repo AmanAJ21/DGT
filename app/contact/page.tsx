@@ -55,7 +55,7 @@ export default function Contact() {
               </span>
             </h1>
           </FadeIn>
-          
+
           <SlideIn direction="up" duration={800} delay={300} immediate={true}>
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               We're here to help with all your logistics needs. Reach out and let's start a conversation
@@ -79,7 +79,7 @@ export default function Contact() {
 
                   <div className="relative">
                     <h2 className="text-3xl font-bold text-white mb-8">Contact Information</h2>
-                    
+
                     <div className="space-y-6">
                       <SlideIn direction="up" duration={600} delay={400}>
                         <div className="flex items-start space-x-4">
@@ -104,6 +104,7 @@ export default function Contact() {
                           </div>
                           <div>
                             <h3 className="font-semibold text-white mb-2">Phone</h3>
+                            <a href="tel:+918007321915" className="text-gray-400 hover:text-blue-400 block">+91 8007321915</a>
                             <a href="tel:+918007321910" className="text-gray-400 hover:text-blue-400 block">+91 8007321910</a>
                           </div>
                         </div>
