@@ -55,12 +55,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google AdSense */}
-        <Script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8069198795330862"
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
-        />
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8069198795330862"
+          crossorigin="anonymous" />
         {/* Google tag (gtag.js) - Optional for better tracking */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
