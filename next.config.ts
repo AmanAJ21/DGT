@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Build output directory
+  distDir: 'web',
+  
   // Performance optimizations
   experimental: {
     optimizeCss: true,

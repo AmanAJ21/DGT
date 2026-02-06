@@ -1,0 +1,11 @@
+{
+  "[project]/components/Dither.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/Dither.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_ogl_src_d05ff7ef._.js",
+      "static/chunks/components_Dither_tsx_2c230d63._.js",
+      "static/chunks/public_css_Dither_2b09566a.css",
+      "static/chunks/components_Dither_tsx_9a643352._.js"
+    ]
+  }
+}

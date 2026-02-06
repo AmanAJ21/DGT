@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///D:/DGT/public/css/Dither.css"],"sourcesContent":[".dither-container {\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  pointer-events: none;\r\n  z-index: 0;\r\n}\r\n\r\n.dither-container canvas {\r\n  width: 100% !important;\r\n  height: 100% !important;\r\n}\r\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAUA"}}]
+}

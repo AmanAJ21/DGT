@@ -30,9 +30,9 @@ export const FadeIn = memo(({ children, duration = 1, delay = 0, className = '',
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={immediate ? { opacity: 1 } : undefined}
+      animate={{ opacity: 1 }}
       whileInView={immediate ? undefined : { opacity: 1 }}
-      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      viewport={immediate ? { once: true } : { once: true, margin: '-10%' }}
       transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
@@ -59,9 +59,9 @@ export const SlideIn = memo(({ children, direction = 'up', duration = 0.8, delay
   return (
     <motion.div
       initial={{ opacity: 0, ...directions[direction] }}
-      animate={immediate ? { opacity: 1, x: 0, y: 0 } : undefined}
+      animate={{ opacity: 1, x: 0, y: 0 }}
       whileInView={immediate ? undefined : { opacity: 1, x: 0, y: 0 }}
-      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      viewport={immediate ? { once: true } : { once: true, margin: '-10%' }}
       transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
@@ -82,9 +82,9 @@ export const ScaleIn = memo(({ children, duration = 0.8, delay = 0, className = 
   return (
     <motion.div
       initial={{ opacity: 0, scale: initialScale }}
-      animate={immediate ? { opacity: 1, scale: 1 } : undefined}
+      animate={{ opacity: 1, scale: 1 }}
       whileInView={immediate ? undefined : { opacity: 1, scale: 1 }}
-      viewport={immediate ? undefined : { once: true, margin: '-10%' }}
+      viewport={immediate ? { once: true } : { once: true, margin: '-10%' }}
       transition={{ duration: actualDuration, delay: actualDelay }}
       className={className}
     >
